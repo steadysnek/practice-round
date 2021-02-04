@@ -2,7 +2,7 @@ import random
 import util
 from typing import NamedTuple, List
 from problem import DataSet
-data_set = DataSet("res/d.txt")
+data_set = DataSet("res/a.txt")
 
 class Delivery(NamedTuple):
     team_size: int
@@ -36,10 +36,19 @@ class Deliveries:
                 # choose n random remaining pizzas
                 pizzas = []
                 for i in range(team_size):
-                    # pizza_i = random.randrange(0, len(pizzas))
-                    pizza_i = random.choice(list(set(range(data_set.num_pizzas)) - used_pizza_indexes))
+                    # deterministic method:
+                    pizza_i = random.choice(tuple(set(range(data_set.num_pizzas)) - used_pizza_indexes))
                     pizzas.append(pizza_i)
                     used_pizza_indexes.add(pizza_i)
+
+                    # monte carlo method:
+                    # while True:
+                    #     pizza_i = random.randrange(0, data_set.num_pizzas)
+                    #
+                    #     if pizza_i not in used_pizza_indexes:
+                    #         pizzas.append(pizza_i)
+                    #         used_pizza_indexes.add(pizza_i)
+                    #         break
 
                 self.deliveries.append(Delivery(team_size, pizzas))
 
