@@ -16,12 +16,19 @@ class Deliveries:
         Randomly assign any remaining valid deliveries
         :return:
         """
-        used_pizza_indexes = []
+        used_pizza_indexes = set()
         team_counts_left = problem.team_counts.copy()
+
+        for delivery in self.deliveries:
+            team_counts_left[delivery.team_size] -= 1
+            used_pizza_indexes.update(delivery.pizzas)
+
+        # drop empty team_sizes from consideration
+        team_counts_left = {k:v for k, v in team_counts_left.items() if v > 0}
 
         while True:
             # choose random team size
-            team_size = util.random_weighted_choice(problem.team_counts.items())
+            team_size = util.random_weighted_choice(team_counts_left.items())
 
             # if enough pizzas are remaining
             if problem.num_pizzas - len(used_pizza_indexes) >= team_size:
@@ -29,19 +36,22 @@ class Deliveries:
                 pizzas = []
                 for i in range(team_size):
                     # pizza_i = random.randrange(0, len(pizzas))
-                    pizza_i = random.choice(list(set(range(problem.num_pizzas)) - set(used_pizza_indexes)))
+                    pizza_i = random.choice(list(set(range(problem.num_pizzas)) - used_pizza_indexes))
                     pizzas.append(pizza_i)
-                    used_pizza_indexes.append(pizza_i)
+                    used_pizza_indexes.add(pizza_i)
 
                 self.deliveries.append(Delivery(team_size, pizzas))
+
                 team_counts_left[team_size] -= 1
+                if team_counts_left[team_size] <= 0:
+                    team_counts_left.pop(team_size)
 
             smallest_remaining_team_size = min(team_counts_left.keys())
             remaining_pizza_count = problem.num_pizzas - len(used_pizza_indexes)
-            if remaining_pizza_count <= smallest_remaining_team_size:
+            if remaining_pizza_count < smallest_remaining_team_size:
                 break
 
-    def format(self):
+    def print(self):
         print(len(self.deliveries))
 
         for delivery in self.deliveries:
@@ -49,4 +59,4 @@ class Deliveries:
 
 d = Deliveries()
 d.random_assign()
-print(d)
+d.print()
