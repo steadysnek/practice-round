@@ -1,7 +1,8 @@
 import random
 import util
 from typing import NamedTuple, List
-import problem
+from problem import DataSet
+data_set = DataSet("res/d.txt")
 
 class Delivery(NamedTuple):
     team_size: int
@@ -17,7 +18,7 @@ class Deliveries:
         :return:
         """
         used_pizza_indexes = set()
-        team_counts_left = problem.team_counts.copy()
+        team_counts_left = data_set.team_counts.copy()
 
         for delivery in self.deliveries:
             team_counts_left[delivery.team_size] -= 1
@@ -31,12 +32,12 @@ class Deliveries:
             team_size = util.random_weighted_choice(team_counts_left.items())
 
             # if enough pizzas are remaining
-            if problem.num_pizzas - len(used_pizza_indexes) >= team_size:
+            if data_set.num_pizzas - len(used_pizza_indexes) >= team_size:
                 # choose n random remaining pizzas
                 pizzas = []
                 for i in range(team_size):
                     # pizza_i = random.randrange(0, len(pizzas))
-                    pizza_i = random.choice(list(set(range(problem.num_pizzas)) - used_pizza_indexes))
+                    pizza_i = random.choice(list(set(range(data_set.num_pizzas)) - used_pizza_indexes))
                     pizzas.append(pizza_i)
                     used_pizza_indexes.add(pizza_i)
 
@@ -47,16 +48,18 @@ class Deliveries:
                     team_counts_left.pop(team_size)
 
             smallest_remaining_team_size = min(team_counts_left.keys())
-            remaining_pizza_count = problem.num_pizzas - len(used_pizza_indexes)
+            remaining_pizza_count = data_set.num_pizzas - len(used_pizza_indexes)
             if remaining_pizza_count < smallest_remaining_team_size:
                 break
 
-    def print(self):
-        print(len(self.deliveries))
+    def format(self):
+        ret = str(len(self.deliveries)) + "\n"
 
         for delivery in self.deliveries:
-            print(str(delivery.team_size) + " " + " ".join(map(str, delivery.pizzas)))
+            ret += str(delivery.team_size) + " " + " ".join(map(str, delivery.pizzas)) + "\n"
+        return ret
 
 d = Deliveries()
 d.random_assign()
-d.print()
+print(d.format())
+data_set.output(d.format())
