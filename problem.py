@@ -56,4 +56,5 @@ class UnoDataSet(BaseDataSet):
                     ingredients[ingredient] = ingredient_count
                     ingredient_count += 1
                 bit_counter += 1 << ingredients[ingredient]
-            self.pizzas[bit_counter] = amount
+
+            self.pizzas[bit_counter] = self.pizzas.get(bit_counter, 0) + amount
