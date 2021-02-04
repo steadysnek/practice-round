@@ -11,12 +11,15 @@ class Deliveries:
     def __init__(self):
         self.deliveries = []
 
-    def random_init(self):
+    def random_assign(self):
+        """
+        Randomly assign any remaining valid deliveries
+        :return:
+        """
         used_pizza_indexes = []
         team_counts_left = problem.team_counts.copy()
 
-        # Note: while stop condition is not currently correct, might infinite loop
-        while len(used_pizza_indexes) < problem.num_pizzas:
+        while True:
             # choose random team size
             team_size = util.random_weighted_choice(problem.team_counts.items())
 
@@ -33,6 +36,11 @@ class Deliveries:
                 self.deliveries.append(Delivery(team_size, pizzas))
                 team_counts_left[team_size] -= 1
 
+            smallest_remaining_team_size = min(team_counts_left.keys())
+            remaining_pizza_count = problem.num_pizzas - len(used_pizza_indexes)
+            if remaining_pizza_count <= smallest_remaining_team_size:
+                break
+
     def format(self):
         print(len(self.deliveries))
 
@@ -40,5 +48,5 @@ class Deliveries:
             print(str(delivery.team_size) + " " + " ".join(map(str, delivery.pizzas)))
 
 d = Deliveries()
-d.random_init()
+d.random_assign()
 print(d)
