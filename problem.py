@@ -45,11 +45,10 @@ class UnoDataSet(BaseDataSet):
         self.team_counts = meta_data[1:]
 
         ingredients = {}
-        self.pizzas = {}
+        self.pizzas = []
 
         ingredient_count = 0
         for line in split_file[1:]:
-            amount = int(line[0])
             bit_counter = 0
             for ingredient in line[1:]:
                 if(ingredient not in ingredients):
@@ -57,4 +56,4 @@ class UnoDataSet(BaseDataSet):
                     ingredient_count += 1
                 bit_counter += 1 << ingredients[ingredient]
 
-            self.pizzas[bit_counter] = self.pizzas.get(bit_counter, 0) + amount
+            self.pizzas.append(bit_counter)
